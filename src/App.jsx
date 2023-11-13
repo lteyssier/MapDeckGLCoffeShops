@@ -1,6 +1,7 @@
 import './App.css'
-import DATA_M from '../public/cafeterias.json'
-import DATA_N from '../public/cafeterias_H1.json'
+import DATA_M from '../public/coffeeshops.json'
+import DATA_N from '../public/bars.json'
+import DATA_O from '../public/restaurants.json'
 import Map from 'react-map-gl'
 import DeckGL from '@deck.gl/react';
 import MapLibreGL from 'maplibre-gl';
@@ -67,24 +68,49 @@ function getTooltip({object}) {
   return `\
     latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ''}
     longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ''}
-    ${count} Cafeterías`;
+    ${count} Locals`;
 }
 
 
 function App() {
+  const data_h = DATA_M.map(d=>[Number(d.lng),Number(d.lat),Number(d.weight)])
+  const data_j = DATA_N.map(d=>[Number(d.lng),Number(d.lat),Number(d.weight)])
+  const data_k = DATA_O.map(d=>[Number(d.lng),Number(d.lat),Number(d.weight)])
   const [isToggled, setIsToggled] = useState(false); 
   const [isToggled2, setIsToggled2] = useState(false); 
-  const data_l = DATA_M?.map(d =>[Number(d.lng), Number(d.lat)])
-  const data_h = DATA_N.map(d=>[Number(d.lng),Number(d.lat),Number(d.weight)])
-  console.log(data_h)
+  const [dataTitle, setDataTitle] = useState("Coffee Shops");
+  const [dataMap, setDataMap] = useState(data_h)
+ 
+    const options = [
+       {name:"Coffee shops", dataset:data_h},
+       {name:"Bars", dataset:data_j},
+       {name:"Restaurants", dataset:data_k}
+    ]
+    const onOptionChangeHandler = (event) => {
+        switch (event.target.value){
+          case "Coffee shops":
+            setDataMap(data_h)
+            break
+          case "Bars":
+            setDataMap(data_j)
+            break  
+          case "Restaurants":
+            setDataMap(data_k)
+            break
+        }
+
+        setDataTitle(event.target.value)
+
+    };
+
   const layers = [
     new HexagonLayer({
       id: 'hexagon-layer',
       colorRange,
       coverage:1,
-      data:data_l,
-      elevationRange: [0, 5000],
-      elevationScale: data_l && data_l?.length ? 50 : 0,
+      data:dataMap,
+      elevationRange: [0, 4000],
+      elevationScale: dataMap && dataMap?.length ? 50 : 0,
       extruded: true,
       getPosition: d => d,
       pickable: true,
@@ -100,7 +126,7 @@ function App() {
 
   const layers2= [
     new HeatmapLayer({
-      data:data_h,
+      data:dataMap,
       id: 'heatmp-layer',
       pickable: false,
       getPosition: d => [d[0], d[1]],
@@ -112,21 +138,31 @@ function App() {
 
   return (
     <>
-    <div className={isToggled ? 'titulo active': 'titulo'}>
-        Coffee shops
+    <div className={'selectorT'}>
+       <select onChange={onOptionChangeHandler}>  
+                {options.map((option, index) => {
+                    return (
+                        <option key={index}>
+                            {option.name}
+                        </option>
+                    );
+                })}
+        </select>
+      
     </div>
+    
     <div className='containerBT'>
     <button className={isToggled ? 'buttonT' : 'buttonB'} onClick={() => setIsToggled(!isToggled)}>
          {isToggled ? 'Dark' : 'Light'}
    </button>
     <button className={isToggled ? 'buttonT' : 'buttonB'} onClick={() => setIsToggled2(!isToggled2)}>
-         {isToggled2 ? 'Hexagon' : 'Heatmap'}
+         {isToggled2 ? 'Heatmap' : 'Hexagon'}
    </button>
    </div>
     <DeckGL
       initialViewState = {INITIAL_VIEW_STATE}
       controller= {true}
-      layers = {isToggled2 ? layers : layers2}
+      layers = {isToggled2 ? layers2 : layers}
       effects={[lightingEffect]}
       getTooltip={getTooltip}
       className="mapa"

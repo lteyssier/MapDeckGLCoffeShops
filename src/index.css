@@ -15,10 +15,27 @@ body {
     gap: 0.8rem;
 }
 
+.selectorT{
+  margin-left: 1.2rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 99;
+}
+
+.selectorT select{
+  background-color:#92b8b8;
+  padding: 0.5rem;
+  font-size: 2rem;
+  width: 19rem;
+  color: #474a4d;
+  font-weight: 700;
+}
+
 .titulo{
     position: relative;
     z-index: 99;
-    margin-left: 1.2rem;
+    margin-left: 0rem;
+    margin-bottom: 0;
     margin-top: 1rem;
     font-size: 2rem;
     font-weight: 800;
@@ -45,7 +62,7 @@ button{
 .buttonB{
   position: relative;
   background-color:#0db6d0;
-  color: rgb(71, 74, 77);
+  color: #474a4d;
 }
 
 .active{
