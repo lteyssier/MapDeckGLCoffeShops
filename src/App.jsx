@@ -10,7 +10,7 @@ import { AmbientLight, PointLight, LightingEffect} from '@deck.gl/core'
 import { useState } from 'react';
 
 
-const MAP_STYLE2 = 'https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json';
+const MAP_STYLE2 = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 const ambientLight = new AmbientLight({
   color: [255, 255, 255],
@@ -56,6 +56,14 @@ export const colorRange = [
   [254, 173, 84],
   [209, 55, 78]
 ];
+// export const colorRange = [
+//   [178,24,43],
+//   [239,138,98],
+//   [253,219,199],
+//   [209,229,240],
+//   [103,169,207],
+//   [33,102,172]
+// ];
 
 function getTooltip({object}) {
   if (!object) {
@@ -109,17 +117,17 @@ function App() {
       colorRange,
       coverage:1,
       data:dataMap,
-      elevationRange: [0, 4000],
+      elevationRange: [0, 3000],
       elevationScale: dataMap && dataMap?.length ? 50 : 0,
       extruded: true,
       getPosition: d => d,
       pickable: true,
-      radius:900,
-      upperPercentile:1000,
+      radius:1000,
+      upperPercentile:800,
       material,
 
       transitions: {
-        elevationScale: 2000
+        elevationScale: 3000
       }
     })
   ] 
@@ -127,11 +135,12 @@ function App() {
   const layers2= [
     new HeatmapLayer({
       data:dataMap,
+      colorRange:colorRange,
       id: 'heatmp-layer',
       pickable: false,
       getPosition: d => [d[0], d[1]],
       getWeight: d => d[2],
-      radiusPixels:30,
+      radiusPixels:10,
       intensity:1,
       threshold:0.03
     })]
